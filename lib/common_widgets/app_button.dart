@@ -8,6 +8,9 @@ class AppButton extends StatelessWidget {
   final EdgeInsets padding;
   final Widget? trailingWidget;
   final Function? onPressed;
+  final Color? bgColor; // Added property for background color
+  final Color? textColor; // Added property for text color
+  final double? height;
 
   const AppButton({
     Key? key,
@@ -17,12 +20,16 @@ class AppButton extends StatelessWidget {
     this.padding = const EdgeInsets.symmetric(vertical: 24),
     this.trailingWidget,
     this.onPressed,
+    this.bgColor,
+    this.textColor,
+    this.height = 65
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.maxFinite,
+      height: height,
       child: ElevatedButton(
         onPressed: () {
           onPressed?.call();
@@ -33,10 +40,10 @@ class AppButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(roundness),
           ),
           elevation: 0,
-          backgroundColor: AppColors.primaryColor,
+          backgroundColor: bgColor ?? AppColors.primaryColor,
           textStyle: TextStyle(
             color: Colors.white,
-            fontFamily: Theme.of(context).textTheme.bodyText1?.fontFamily,
+            fontFamily: Theme.of(context).textTheme.bodyLarge?.fontFamily,
             fontWeight: fontWeight,
           ),
           padding: padding,
@@ -52,6 +59,7 @@ class AppButton extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: fontWeight,
+                  color: textColor ?? Colors.white
                 ),
               ),
             ),

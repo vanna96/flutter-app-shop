@@ -22,16 +22,17 @@ class ExploreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Color(0x379E9E97),
         body: SafeArea(
-      child: Column(
-        children: [
-          getHeader(),
-          Expanded(
-            child: getStaggeredGridView(context),
+          child: Column(
+            children: [
+              getHeader(),
+              Expanded(
+                child: getStaggeredGridView(context),
+              ),
+            ],
           ),
-        ],
-      ),
-    ));
+        ));
   }
 
   Widget getHeader() {

@@ -40,6 +40,7 @@ class AccountScreen extends StatelessWidget {
                   }).toList(),
                   seperator: Divider(
                     thickness: 1,
+                    color: Color(0x379E9E97),
                   ),
                 ),
               ),

@@ -53,7 +53,7 @@ var demoItems = [
       imagePath: "assets/images/grocery_images/chicken.png"),
 ];
 
-var exclusiveOffers = [demoItems[0], demoItems[1]];
+var exclusiveOffers = [demoItems[0], demoItems[1], demoItems[2], demoItems[3]];
 
 var bestSelling = [demoItems[2], demoItems[3]];
 

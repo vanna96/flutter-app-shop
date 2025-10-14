@@ -10,6 +10,7 @@ class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -44,6 +45,7 @@ class CartScreen extends StatelessWidget {
                     ),
                     child: Divider(
                       thickness: 1,
+                      color: Color(0x379E9E97),
                     ),
                   ),
                 ),
@@ -66,7 +68,7 @@ class CartScreen extends StatelessWidget {
         label: "Go To Check Out",
         fontWeight: FontWeight.w600,
         padding: EdgeInsets.symmetric(vertical: 30),
-        trailingWidget: getButtonPriceWidget(),
+        // trailingWidget: getButtonPriceWidget(),
         onPressed: () {
           showBottomSheet(context);
         },
@@ -76,14 +78,14 @@ class CartScreen extends StatelessWidget {
 
   Widget getButtonPriceWidget() {
     return Container(
-      padding: EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        color: Color(0xff489E67),
-        borderRadius: BorderRadius.circular(4),
-      ),
+      // padding: EdgeInsets.all(2),
+      // decoration: BoxDecoration(
+      //   color: Color(0xff489E67),
+      //   borderRadius: BorderRadius.circular(4),
+      // ),
       child: Text(
-        "\$12.96",
-        style: TextStyle(fontWeight: FontWeight.w600),
+        "\$1,002,002.96",
+        style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
       ),
     );
   }

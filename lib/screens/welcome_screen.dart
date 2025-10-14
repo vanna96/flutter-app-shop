@@ -77,7 +77,7 @@ class WelcomeScreen extends StatelessWidget {
 
   Widget sloganText() {
     return AppText(
-      text: "Get your grecories as fast as in hour",
+      text: "Get your products as fast as in hour",
       fontSize: 16,
       fontWeight: FontWeight.w600,
       color: Color(0xffFCFCFC).withOpacity(0.7),
@@ -89,6 +89,8 @@ class WelcomeScreen extends StatelessWidget {
       label: "Get Started",
       fontWeight: FontWeight.w600,
       padding: EdgeInsets.symmetric(vertical: 25),
+      // bgColor: Colors.red,
+      textColor: Colors.white,
       onPressed: () {
         onGetStartedClicked(context);
       },
