@@ -9,7 +9,7 @@ void main() async {
 
   await GetStorage.init(); // ✅ important
 
-  Get.put(LanguageController()); // now storage is ready
-
+  Get.put(LanguageController());
   runApp(const MyApp());
+
 }
