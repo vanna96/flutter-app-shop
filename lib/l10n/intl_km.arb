@@ -1,0 +1,21 @@
+{
+    "@@locale": "km",
+    "welcome_back": "សូមស្វាគមន៍វិញ",
+    "please_login": "សូមចូលប្រើប្រាស់ដើម្បីបន្ត",
+    "login": "ចូល",
+    "select_language": "ជ្រើសរើសភាសា",
+    "home": "ទំព័រដើម",
+    "explore": "ស្វែងរក",
+    "shop": "ហាង",
+    "cart": "កន្រ្តាក់",
+    "favourite": "ចូលចិត្ត",
+    "account": "គណនី",
+    "email_username": "អ៊ីមែល / ឈ្មោះអ្នកប្រើ",
+    "password": "ពាក្យសម្ងាត់",
+    "login": "ចូល",
+    "category": "ប្រភេទ",
+    "new_arrival": "ផលិតផលមកដល់ថ្មី",
+    "best_sell": "ចំណាត់ថ្នាក់កំពូល",
+    "see_all": "មើលទាំងអស់",
+    "select_location": "ជ្រើសរើសទីតាំង"
+}

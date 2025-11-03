@@ -16,7 +16,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: navigatorItems[currentIndex].screen,
+      body: getNavigatorItems(context)[currentIndex].screen,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
@@ -49,7 +49,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             selectedLabelStyle: TextStyle(fontWeight: FontWeight.w600),
             unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w600),
             unselectedItemColor: Colors.black,
-            items: navigatorItems.map((e) {
+            items: getNavigatorItems(context).map((e) {
               return getNavigationBarItem(
                   label: e.label, index: e.index, iconPath: e.iconPath);
             }).toList(),

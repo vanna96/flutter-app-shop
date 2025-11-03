@@ -1,0 +1,23 @@
+{
+    "@@locale": "en",
+    "welcome_back": "Welcome Back",
+    "please_login": "Please login to continue",
+    "login": "Login",
+    "select_language": "Select Language",
+    "home": "Home",
+    "explore": "Explore",
+    "shop": "Shop",
+    "cart": "Cart",
+    "favourite": "Favourite",
+    "account": "Account",
+    "email_username": "Email / Username",
+    "password": "Password",
+    "login": "Login",
+    "category": "Category",
+    "new_arrival": "New Arrival",
+    "best_sell": "Best Selling",
+    "see_all": "See All",
+    "select_location": "Select Location"
+
+}
+

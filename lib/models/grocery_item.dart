@@ -57,7 +57,7 @@ var exclusiveOffers = [demoItems[0], demoItems[1], demoItems[2], demoItems[3]];
 
 var bestSelling = [demoItems[2], demoItems[3]];
 
-var groceries = [demoItems[4], demoItems[5]];
+var groceries = [demoItems[0], demoItems[1], demoItems[2], demoItems[3], demoItems[4], demoItems[5]];
 
 var beverages = [
   GroceryItem(
@@ -73,7 +73,7 @@ var beverages = [
       price: 1.50,
       imagePath: "assets/images/beverages_images/sprite.png"),
   GroceryItem(
-      id: 8,
+      id: 10,
       name: "Apple Juice",
       description: "2L, Price",
       price: 15.99,
@@ -85,7 +85,7 @@ var beverages = [
       price: 1.50,
       imagePath: "assets/images/beverages_images/orange_juice.png"),
   GroceryItem(
-      id: 10,
+      id: 12,
       name: "Coca Cola Can",
       description: "325ml, Price",
       price: 4.99,

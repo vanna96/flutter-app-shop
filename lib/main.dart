@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:grocery_app/controllers/LanguageController.dart';
 import 'app.dart';
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await GetStorage.init(); // ✅ important
+
+  Get.put(LanguageController()); // now storage is ready
+
+  runApp(const MyApp());
 }

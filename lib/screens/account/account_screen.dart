@@ -1,58 +1,236 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:grocery_app/common_widgets/app_text.dart';
+import 'package:grocery_app/controllers/LanguageController.dart';
 import 'package:grocery_app/helpers/column_with_seprator.dart';
+import 'package:grocery_app/screens/account/translate_page.dart';
 import 'package:grocery_app/styles/colors.dart';
-
 import 'account_item.dart';
+import 'package:grocery_app/common_widgets/app_button.dart';
+import 'package:grocery_app/generated/l10n.dart';
 
 class AccountScreen extends StatelessWidget {
+  final bool isAuthenticated = false;
+  final LanguageController languageController = Get.find<LanguageController>();
+  AccountScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Container(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 20,
-              ),
-              ListTile(
-                leading:
-                    SizedBox(width: 65, height: 65, child: getImageHeader()),
-                title: AppText(
-                  text: "Mohammed Hashim",
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-                subtitle: AppText(
-                  text: "github.com/mohammedhashim44",
-                  color: Color(0xff7C7C7C),
-                  fontWeight: FontWeight.normal,
-                  fontSize: 16,
-                ),
-              ),
-              Column(
-                children: getChildrenWithSeperator(
-                  widgets: accountItems.map((e) {
-                    return getAccountItemWidget(e);
-                  }).toList(),
-                  seperator: Divider(
-                    thickness: 1,
-                    color: Color(0x379E9E97),
+      child: Scaffold(
+        body: isAuthenticated
+            ? _buildAccountPage(context)
+            : _buildLoginPage(context),
+      ),
+    );
+  }
+
+  Widget _buildLoginPage(BuildContext context) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 40),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Language selector at the top right
+                Align(
+                  alignment: Alignment.topRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TranslatePage(),
+                        ),
+                      );
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.language, color: Colors.black),
+                        const SizedBox(width: 5),
+                        Obx(() => Text(
+                              languageController.currentLanguage.value,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              logoutButton(),
-              SizedBox(
-                height: 20,
-              )
-            ],
+
+                SizedBox(height: 10),
+
+                // Profile avatar
+                CircleAvatar(
+                  radius: 50,
+                  backgroundImage: AssetImage("assets/images/profile.png"),
+                  backgroundColor: AppColors.primaryColor.withOpacity(0.7),
+                ),
+                SizedBox(height: 30),
+
+                AppText(
+                  text: S.of(context).welcome_back,
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                ),
+                SizedBox(height: 10),
+                AppText(
+                  text: S.of(context).please_login,
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
+                SizedBox(height: 30),
+
+                // Email field
+                TextFormField(
+                  decoration: InputDecoration(
+                    hintText: S.of(context).email_username,
+                    prefixIcon: Icon(Icons.email),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide:
+                          BorderSide(color: Colors.grey.shade400, width: 1),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide:
+                          BorderSide(color: Colors.grey.shade400, width: 1),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide: BorderSide(color: Colors.blue, width: 2),
+                    ),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                ),
+
+                SizedBox(height: 20),
+
+                // Password field
+                TextFormField(
+                  decoration: InputDecoration(
+                    hintText: S.of(context).password,
+                    prefixIcon: Icon(Icons.lock),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide:
+                          BorderSide(color: Colors.grey.shade400, width: 1),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide:
+                          BorderSide(color: Colors.grey.shade400, width: 1),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide: BorderSide(color: Colors.blue, width: 2),
+                    ),
+                  ),
+                  obscureText: true,
+                ),
+
+                SizedBox(height: 20),
+
+                // Login button
+                AppButton(
+                  height: 60,
+                  label: S.of(context).login,
+                  fontWeight: FontWeight.w600,
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  onPressed: () {},
+                ),
+
+                SizedBox(height: 15),
+              ],
+            ),
           ),
+        );
+      },
+    );
+  }
+
+// Helper for social buttons
+  Widget _socialLoginButton(String iconPath) {
+    return InkWell(
+      onTap: () {
+        // Social login logic
+      },
+      child: Container(
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: SvgPicture.asset(
+          iconPath,
+          width: 24,
+          height: 24,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAccountPage(BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minHeight: MediaQuery.of(context).size.height - 150,
+      ),
+      child: IntrinsicHeight(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(height: 20),
+            ListTile(
+              leading: SizedBox(width: 65, height: 65, child: getImageHeader()),
+              title: AppText(
+                text: "Mr Nobody",
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+              subtitle: AppText(
+                text: "@iamvanna",
+                color: Color(0xff7C7C7C),
+                fontWeight: FontWeight.normal,
+                fontSize: 16,
+              ),
+            ),
+            // Account items
+            ...getChildrenWithSeperator(
+              widgets:
+                  accountItems.map((e) => getAccountItemWidget(e)).toList(),
+              seperator: Divider(
+                thickness: 1,
+                color: Color(0x379E9E97),
+              ),
+            ),
+            Spacer(), // pushes logout button to bottom
+            logoutButton(),
+            SizedBox(height: 15), // bottom spacing
+            Padding(
+              padding: const EdgeInsets.only(left: 20, bottom: 10),
+              child: Text(
+                'Version 0.0.1',
+                style: TextStyle(
+                  color: Colors.grey, // optional styling
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -60,7 +238,7 @@ class AccountScreen extends StatelessWidget {
 
   Widget logoutButton() {
     return Container(
-      width: double.maxFinite,
+      width: double.infinity,
       margin: EdgeInsets.symmetric(horizontal: 25),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
@@ -70,9 +248,6 @@ class AccountScreen extends StatelessWidget {
           ),
           elevation: 0,
           backgroundColor: Color(0xffF2F3F2),
-          textStyle: TextStyle(
-            color: Colors.white,
-          ),
           padding: EdgeInsets.symmetric(vertical: 24, horizontal: 25),
           minimumSize: const Size.fromHeight(50),
         ),
@@ -94,7 +269,7 @@ class AccountScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   color: AppColors.primaryColor),
             ),
-            Container()
+            Container() // empty to balance row
           ],
         ),
         onPressed: () {},
@@ -103,9 +278,9 @@ class AccountScreen extends StatelessWidget {
   }
 
   Widget getImageHeader() {
-    String imagePath = "assets/images/account_image.jpg";
+    String imagePath = "assets/images/profile.png";
     return CircleAvatar(
-      radius: 5.0,
+      radius: 32.5, // original ~65/2
       backgroundImage: AssetImage(imagePath),
       backgroundColor: AppColors.primaryColor.withOpacity(0.7),
     );
@@ -120,19 +295,15 @@ class AccountScreen extends StatelessWidget {
           SizedBox(
             width: 20,
             height: 20,
-            child: SvgPicture.asset(
-              accountItem.iconPath,
-            ),
+            child: SvgPicture.asset(accountItem.iconPath),
           ),
-          SizedBox(
-            width: 20,
-          ),
+          SizedBox(width: 20),
           Text(
             accountItem.label,
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           Spacer(),
-          Icon(Icons.arrow_forward_ios)
+          Icon(Icons.arrow_forward_ios),
         ],
       ),
     );
