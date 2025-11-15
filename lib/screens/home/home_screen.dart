@@ -1,17 +1,20 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:grocery_app/controllers/home_controller.dart';
+import 'package:grocery_app/generated/l10n.dart';
+import 'package:grocery_app/models/category_model.dart';
 import 'package:grocery_app/models/grocery_item.dart';
 import 'package:grocery_app/screens/product_details/product_details_screen.dart';
 import 'package:grocery_app/styles/colors.dart';
 import 'package:grocery_app/widgets/grocery_item_card_widget.dart';
-import 'grocery_featured_Item_widget.dart';
+import 'category_cart.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import '../../generated/l10n.dart';
 import 'notification_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
+  final HomeController homeController = Get.put(HomeController());
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -46,12 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
       'description': 'ភូមិព្រែកតាទែន, NR5, ខេត្កណ្តាល',
       'image': 'assets/images/shop.png',
     }
-  ];
-
-  final List<String> promoBanners = [
-    'assets/slider/welcome.jpeg',
-    'assets/slider/50off.jpg',
-    'assets/slider/new_coming.jpg'
   ];
 
   State<HomeScreen> createState() => _HomeScreenState();
@@ -104,36 +101,56 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 25),
-              CarouselSlider(
-                options: CarouselOptions(
-                  height: 180.0,
-                  autoPlay: true,
-                  enlargeCenterPage: true,
-                  viewportFraction: 0.9,
-                  aspectRatio: 16 / 9,
-                  autoPlayCurve: Curves.fastOutSlowIn,
-                  enableInfiniteScroll: true,
-                  autoPlayAnimationDuration: const Duration(seconds: 1),
-                ),
-                items: promoBanners.map((bannerPath) {
-                  return Builder(
-                    builder: (BuildContext context) {
-                      return ClipRRect(
-                        borderRadius: BorderRadius.circular(15),
-                        child: Image.asset(
-                          bannerPath,
-                          fit: BoxFit.fitWidth,
-                          width: MediaQuery.of(context).size.width,
-                        ),
-                      );
-                    },
-                  );
-                }).toList(),
-              ),
+              Obx(() {
+                if (widget.homeController.isLoading.value) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                if (widget.homeController.banners.isEmpty) {
+                  return SizedBox.shrink();
+                }
+
+                return CarouselSlider(
+                  options: CarouselOptions(
+                    height: 180.0,
+                    autoPlay: true,
+                    enlargeCenterPage: true,
+                    viewportFraction: 0.9,
+                    aspectRatio: 16 / 9,
+                    autoPlayCurve: Curves.fastOutSlowIn,
+                    enableInfiniteScroll: true,
+                    autoPlayAnimationDuration: const Duration(seconds: 1),
+                  ),
+                  items: widget.homeController.banners.map((banner) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(15),
+                          child: Image.network(
+                            banner.image, // use network image from API
+                            fit: BoxFit.fitWidth,
+                            width: MediaQuery.of(context).size.width,
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+                );
+              }),
               SizedBox(height: 25),
               _buildSubTitle(S.of(context).category, context),
               SizedBox(height: 15),
-              _buildFeaturedItems(),
+              Obx(() {
+                if (widget.homeController.isLoading.value) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                if (widget.homeController.categories.isEmpty) {
+                  return Center(child: Text("No categories found"));
+                }
+                return _buildFeaturedCategories(
+                    widget.homeController.categories);
+              }),
               SizedBox(height: 25),
               _buildSubTitle(S.of(context).new_arrival, context),
               _buildHorizontalItemSlider(exclusiveOffers),
@@ -223,25 +240,20 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildFeaturedItems() {
+  Widget _buildFeaturedCategories(List<CategoryModel> categories) {
     return Container(
       height: 105,
-      child: ListView(
-        padding: EdgeInsets.zero,
+      child: ListView.separated(
+        padding: EdgeInsets.symmetric(horizontal: 20),
         scrollDirection: Axis.horizontal,
-        children: [
-          SizedBox(width: 20),
-          GroceryFeaturedCard(
-            groceryFeaturedItems[0],
-            color: Color(0xffF8A44C),
-          ),
-          SizedBox(width: 20),
-          GroceryFeaturedCard(
-            groceryFeaturedItems[1],
-            color: AppColors.primaryColor,
-          ),
-          SizedBox(width: 20),
-        ],
+        itemCount: categories.length,
+        itemBuilder: (context, index) {
+          return CategoryCard(
+            categories[index],
+            color: AppColors.primaryColor, // you can vary colors if you want
+          );
+        },
+        separatorBuilder: (context, index) => SizedBox(width: 20),
       ),
     );
   }
