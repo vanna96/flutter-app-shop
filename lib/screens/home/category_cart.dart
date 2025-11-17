@@ -6,7 +6,8 @@ import 'package:grocery_app/controllers/LanguageController.dart';
 import 'package:grocery_app/styles/colors.dart';
 
 class CategoryCard extends StatelessWidget {
-  const CategoryCard(this.category, {this.color = AppColors.primaryColor, super.key});
+  const CategoryCard(this.category,
+      {this.color = AppColors.primaryColor, super.key});
 
   final CategoryModel category;
   final Color color;
@@ -24,12 +25,6 @@ class CategoryCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(18)),
       child: Row(
         children: [
-          // Image.network(
-          //   category.image,
-          //   width: 70,
-          //   height: 70,
-          //   fit: BoxFit.cover,
-          // ),
           CachedNetworkImage(
             key: ValueKey(category.id),
             imageUrl: category.image,
@@ -40,7 +35,11 @@ class CategoryCard extends StatelessWidget {
               width: 70,
               height: 70,
               color: Colors.grey[300],
-              child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+              child: const Center(
+                  child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.primaryColor,
+              )),
             ),
             errorWidget: (context, url, error) => Container(
               width: 70,
@@ -52,9 +51,10 @@ class CategoryCard extends StatelessWidget {
           SizedBox(width: 15),
           Expanded(
             child: Obx(() {
-              final displayName = languageController.currentLanguageCode.value == 'km'
-                  ? (category.khName ?? category.name)
-                  : category.name;
+              final displayName =
+                  languageController.currentLanguageCode.value == 'km'
+                      ? (category.khName ?? category.name)
+                      : category.name;
 
               return Text(
                 displayName,

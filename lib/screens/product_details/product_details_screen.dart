@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:grocery_app/common_widgets/app_button.dart';
 import 'package:grocery_app/common_widgets/app_text.dart';
 import 'package:grocery_app/models/grocery_item.dart';
+import 'package:grocery_app/models/product_model.dart';
 import 'package:grocery_app/styles/colors.dart';
 import 'package:grocery_app/widgets/item_counter_widget.dart';
 
 import 'favourite_toggle_icon_widget.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
-  final GroceryItem groceryItem;
+  final ProductModel groceryItem;
   final String? heroSuffix;
 
   const ProductDetailsScreen(this.groceryItem, {this.heroSuffix});
@@ -85,7 +86,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 ),
                               ),
                               subtitle: AppText(
-                                text: widget.groceryItem.description,
+                                text: widget.groceryItem.description ?? '',
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xff7C7C7C),
@@ -255,7 +256,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       subtitle: AppText(
-                        text: widget.groceryItem.description,
+                        text: widget.groceryItem.description ?? '',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Color(0xff7C7C7C),
@@ -335,7 +336,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             "-" +
             (widget.heroSuffix ?? ""),
         child: Image(
-          image: AssetImage(widget.groceryItem.imagePath),
+          image: AssetImage(widget.groceryItem.image),
         ),
       ),
     );

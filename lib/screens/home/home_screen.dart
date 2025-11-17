@@ -1,13 +1,18 @@
 import 'dart:math';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grocery_app/controllers/home_controller.dart';
 import 'package:grocery_app/generated/l10n.dart';
 import 'package:grocery_app/models/category_model.dart';
 import 'package:grocery_app/models/grocery_item.dart';
+import 'package:grocery_app/models/product_model.dart';
 import 'package:grocery_app/screens/product_details/product_details_screen.dart';
 import 'package:grocery_app/styles/colors.dart';
 import 'package:grocery_app/widgets/grocery_item_card_widget.dart';
+import 'package:redacted/redacted.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'category_cart.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'notification_list_screen.dart';
@@ -102,63 +107,117 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               SizedBox(height: 25),
               Obx(() {
-                if (widget.homeController.isLoading.value) {
-                  return Center(child: CircularProgressIndicator());
-                }
+                final isLoading = widget.homeController.isLoading.value;
+                final banners = widget.homeController.banners;
 
-                if (widget.homeController.banners.isEmpty) {
-                  return SizedBox.shrink();
-                }
+                // Shared carousel options
+                final carouselOptions = CarouselOptions(
+                  height: 180.0,
+                  enlargeCenterPage: true,
+                  viewportFraction: 0.9,
+                  autoPlay: !isLoading,
+                  aspectRatio: 16 / 9,
+                  autoPlayCurve: Curves.fastOutSlowIn,
+                  enableInfiniteScroll: !isLoading,
+                  autoPlayAnimationDuration: const Duration(seconds: 1),
+                );
 
-                return CarouselSlider(
-                  options: CarouselOptions(
-                    height: 180.0,
-                    autoPlay: true,
-                    enlargeCenterPage: true,
-                    viewportFraction: 0.9,
-                    aspectRatio: 16 / 9,
-                    autoPlayCurve: Curves.fastOutSlowIn,
-                    enableInfiniteScroll: true,
-                    autoPlayAnimationDuration: const Duration(seconds: 1),
-                  ),
-                  items: widget.homeController.banners.map((banner) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return ClipRRect(
+                // Skeleton Carousel
+                if (isLoading) {
+                  return CarouselSlider.builder(
+                    itemCount: 3,
+                    itemBuilder: (context, index, realIndex) {
+                      return Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
-                          child: Image.network(
-                            banner.image, // use network image from API
-                            fit: BoxFit.fitWidth,
-                            width: MediaQuery.of(context).size.width,
+                        ),
+                        child: Shimmer.fromColors(
+                          baseColor: Colors.grey.shade300,
+                          highlightColor: Colors.grey.shade100,
+                          child: Container(
+                            width: double.infinity,
+                            height: 180,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade400,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
                           ),
-                        );
-                      },
+                        ),
+                      );
+                    },
+                    options: CarouselOptions(
+                      height: 180.0,
+                      enlargeCenterPage: true,
+                      viewportFraction: 0.9,
+                      autoPlay: !isLoading,
+                      aspectRatio: 16 / 9,
+                      autoPlayCurve: Curves.fastOutSlowIn,
+                      enableInfiniteScroll: !isLoading,
+                      autoPlayAnimationDuration: const Duration(seconds: 1),
+                    ),
+                  );
+                }
+
+                if (banners.isEmpty) return const SizedBox.shrink();
+
+                // Actual banners
+                return CarouselSlider.builder(
+                  itemCount: banners.length,
+                  itemBuilder: (context, index, realIndex) {
+                    final banner = banners[index];
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: CachedNetworkImage(
+                        imageUrl: banner.image,
+                        fit: BoxFit.cover,
+                        width: MediaQuery.of(context).size.width,
+                        placeholder: (context, url) => Container(
+                          width: double.infinity,
+                          height: 180,
+                          color: Colors.grey[300],
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2, color: AppColors.primaryColor),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          width: double.infinity,
+                          height: 180,
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.error, color: Colors.red),
+                        ),
+                      ),
                     );
-                  }).toList(),
+                  },
+                  options: carouselOptions,
                 );
               }),
               SizedBox(height: 25),
               _buildSubTitle(S.of(context).category, context),
               SizedBox(height: 15),
               Obx(() {
-                if (widget.homeController.isLoading.value) {
-                  return Center(child: CircularProgressIndicator());
-                }
-
-                if (widget.homeController.categories.isEmpty) {
-                  return Center(child: Text("No categories found"));
-                }
                 return _buildFeaturedCategories(
-                    widget.homeController.categories);
+                    widget.homeController.categories,
+                    isLoading: widget.homeController.isLoading.value);
               }),
               SizedBox(height: 25),
               _buildSubTitle(S.of(context).new_arrival, context),
-              _buildHorizontalItemSlider(exclusiveOffers),
+              Obx(() {
+                return _buildHorizontalItemSlider(widget.homeController.newP,
+                    isLoading: widget.homeController.isLoading.value);
+              }),
               SizedBox(height: 15),
               _buildSubTitle(S.of(context).best_sell, context),
-              _buildHorizontalItemSlider(bestSelling),
+              Obx(() {
+                return _buildHorizontalItemSlider(widget.homeController.best_sell,
+                    isLoading: widget.homeController.isLoading.value);
+              }),
               SizedBox(height: 15),
-              _buildHorizontalItemSlider(groceries),
+              Obx(() {
+                return _buildHorizontalItemSlider(widget.homeController.best_sell2,
+                    isLoading: widget.homeController.isLoading.value);
+              }),
               SizedBox(height: 15),
             ],
           ),
@@ -240,51 +299,178 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildFeaturedCategories(List<CategoryModel> categories) {
+  Widget _buildFeaturedCategories(List<CategoryModel> categories,
+      {bool isLoading = false}) {
+    final lengthCategory = isLoading ? 2 : categories.length;
+
     return Container(
       height: 105,
       child: ListView.separated(
-        padding: EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         scrollDirection: Axis.horizontal,
-        itemCount: categories.length,
+        itemCount: lengthCategory,
         itemBuilder: (context, index) {
-          return CategoryCard(
-            categories[index],
-            color: AppColors.primaryColor, // you can vary colors if you want
-          );
+          if (isLoading) {
+            return Container(
+              width: 250,
+              height: 105,
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 17),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Row(
+                children: [
+                  Shimmer.fromColors(
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade100,
+                    child: Container(
+                      width: 70,
+                      height: 70,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade400,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 15),
+                  Expanded(
+                    child: Shimmer.fromColors(
+                      baseColor: Colors.grey.shade300,
+                      highlightColor: Colors.grey.shade100,
+                      child: Container(
+                        height: 20,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade400,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return CategoryCard(
+              categories[index],
+              color: gridColors[random.nextInt(gridColors.length)],
+            );
+          }
         },
-        separatorBuilder: (context, index) => SizedBox(width: 20),
+        separatorBuilder: (context, index) => const SizedBox(width: 20),
       ),
     );
   }
 
-  Widget _buildHorizontalItemSlider(List<GroceryItem> items) {
+  Widget _buildHorizontalItemSlider(List<ProductModel> items,
+      {bool isLoading = false}) {
+    final itemCount = isLoading ? 5 : items.length;
+
+    if (!isLoading && items.isEmpty) {
+      return const Center(child: Text("No items found"));
+    }
+
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
+      margin: const EdgeInsets.symmetric(vertical: 10),
       height: 250,
       child: ListView.separated(
-        // padding: EdgeInsets.zero,
-        padding: EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         scrollDirection: Axis.horizontal,
-        itemCount: items.length,
+        itemCount: itemCount,
         itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              _onItemClicked(context, items[index]);
-            },
-            child: GroceryItemCardWidget(
-              item: items[index],
-              heroSuffix:
-                  "item_grocery--${DateTime.now().microsecondsSinceEpoch}",
-            ),
-          );
+          if (isLoading) {
+            return Container(
+              width: 150,
+              height: 250,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Colors.grey.shade200, // light background for card
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Shimmer.fromColors(
+                      baseColor: Colors.grey.shade300,
+                      highlightColor: Colors.grey.shade100,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade400,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Shimmer.fromColors(
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade100,
+                    child: Container(
+                      height: 16,
+                      width: double.infinity,
+                      color: Colors.grey.shade400,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Shimmer.fromColors(
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade100,
+                    child: Container(
+                      height: 14,
+                      width: 150 * 0.6,
+                      color: Colors.grey.shade400,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    children: [
+                      Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        child: Container(
+                          height: 18,
+                          width: 50,
+                          color: Colors.grey.shade400,
+                        ),
+                      ),
+                      const Spacer(),
+                      Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        child: Container(
+                          height: 30,
+                          width: 30,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade400,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          } else {
+            final item = items[index];
+            return GestureDetector(
+              onTap: () => _onItemClicked(context, item),
+              child: GroceryItemCardWidget(
+                item: item,
+                heroSuffix:
+                    "item_grocery--${DateTime.now().microsecondsSinceEpoch}",
+              ),
+            );
+          }
         },
-        separatorBuilder: (context, index) => SizedBox(width: 20),
+        separatorBuilder: (_, __) => const SizedBox(width: 20),
       ),
     );
   }
 
-  void _onItemClicked(BuildContext context, GroceryItem groceryItem) {
+  void _onItemClicked(BuildContext context, ProductModel groceryItem) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -443,6 +629,24 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         );
       },
+    );
+  }
+
+  Widget _buildSkeletonSlide(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(15),
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: 180,
+      ).redacted(
+        context: context,
+        redact: true,
+        configuration: RedactedConfiguration(
+          animationDuration: const Duration(milliseconds: 1000),
+          redactedColor: Colors.grey.shade200,
+          defaultBorderRadius: BorderRadius.circular(15),
+        ),
+      ),
     );
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:grocery_app/common_widgets/app_text.dart';
 import 'package:grocery_app/models/grocery_item.dart';
+import 'package:grocery_app/models/product_model.dart';
 import 'package:grocery_app/screens/product_details/product_details_screen.dart';
 import 'package:grocery_app/widgets/grocery_item_card_widget.dart';
 
@@ -61,7 +62,7 @@ class CategoryItemsScreen extends StatelessWidget {
           crossAxisCount: 2,
           // I only need two card horizontally
           children: beverages.asMap().entries.map<Widget>((e) {
-            GroceryItem groceryItem = e.value;
+            dynamic groceryItem = e.value;
             return GestureDetector(
               onTap: () {
                 onItemClicked(context, groceryItem);
@@ -82,7 +83,7 @@ class CategoryItemsScreen extends StatelessWidget {
     );
   }
 
-  void onItemClicked(BuildContext context, GroceryItem groceryItem) {
+  void onItemClicked(BuildContext context, ProductModel groceryItem) {
     Navigator.push(
       context,
       MaterialPageRoute(

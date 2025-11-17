@@ -1,12 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/common_widgets/app_text.dart';
 import 'package:grocery_app/models/grocery_item.dart';
+import 'package:grocery_app/models/product_model.dart';
 import 'package:grocery_app/styles/colors.dart';
 
 class GroceryItemCardWidget extends StatelessWidget {
   GroceryItemCardWidget({Key? key, required this.item, this.heroSuffix})
       : super(key: key);
-  final GroceryItem item;
+  final ProductModel item;
   final String? heroSuffix;
 
   final double width = 174;
@@ -39,7 +41,25 @@ class GroceryItemCardWidget extends StatelessWidget {
               child: Center(
                 child: Hero(
                   tag: "GroceryItem:" + item.name + "-" + (heroSuffix ?? ""),
-                  child: imageWidget(),
+                  child: CachedNetworkImage(
+                    imageUrl: item.image,
+                    fit: BoxFit.cover,
+                    width: MediaQuery.of(context).size.width,
+                    placeholder: (context, url) => Container(
+                      width: double.infinity,
+                      height: 180,
+                      color: Colors.grey[300],
+                      child: const Center(
+                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primaryColor),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      width: double.infinity,
+                      height: 180,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.error, color: Colors.red),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -74,12 +94,6 @@ class GroceryItemCardWidget extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Widget imageWidget() {
-    return Container(
-      child: Image.asset(item.imagePath),
     );
   }
 
