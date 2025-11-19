@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/splash_screen.dart';
 import 'package:grocery_app/styles/theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'controllers/LanguageController.dart';
+import 'controllers/language_controller.dart';
 import 'generated/l10n.dart';
 
 import 'package:get/get.dart';

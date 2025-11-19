@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grocery_app/common_widgets/app_text.dart';
 import 'package:grocery_app/models/grocery_item.dart';
+import 'package:grocery_app/models/product_model.dart';
 import 'package:grocery_app/widgets/grocery_item_card_widget.dart';
 import 'package:grocery_app/screens/product_details/product_details_screen.dart';
 
@@ -13,7 +14,7 @@ class _ShopScreenState extends State<ShopScreen> {
   bool isGridView = false; // false = list, true = grid
   String? selectedSort; // Tracks selected sorting option
 
-  List<GroceryItem> sortedGroceries = List.from(groceries); // Copy of groceries
+  List<ProductModel> sortedGroceries = List.from([]); // Copy of groceries
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +127,7 @@ class _ShopScreenState extends State<ShopScreen> {
     }
   }
 
-  Widget _buildVerticalItemList(List<GroceryItem> items) {
+  Widget _buildVerticalItemList(List<ProductModel> items) {
     return ListView.separated(
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       itemCount: items.length,
@@ -143,7 +144,7 @@ class _ShopScreenState extends State<ShopScreen> {
     );
   }
 
-  Widget _buildGridItemList(List<GroceryItem> items) {
+  Widget _buildGridItemList(List<ProductModel> items) {
     return GridView.builder(
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -165,7 +166,7 @@ class _ShopScreenState extends State<ShopScreen> {
     );
   }
 
-  void _onItemClicked(BuildContext context, GroceryItem groceryItem) {
+  void _onItemClicked(BuildContext context, ProductModel groceryItem) {
     Navigator.push(
       context,
       MaterialPageRoute(

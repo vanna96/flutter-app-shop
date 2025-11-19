@@ -2,24 +2,32 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:grocery_app/controllers/home_controller.dart';
+import 'package:grocery_app/controllers/language_controller.dart';
+import 'package:grocery_app/controllers/banner_controller.dart';
+import 'package:grocery_app/controllers/category_controller.dart';
+import 'package:grocery_app/controllers/product_controller.dart';
+import 'package:grocery_app/controllers/store_controller.dart';
 import 'package:grocery_app/generated/l10n.dart';
 import 'package:grocery_app/models/category_model.dart';
-import 'package:grocery_app/models/grocery_item.dart';
 import 'package:grocery_app/models/product_model.dart';
+import 'package:grocery_app/models/store_model.dart';
 import 'package:grocery_app/screens/product_details/product_details_screen.dart';
 import 'package:grocery_app/styles/colors.dart';
 import 'package:grocery_app/widgets/grocery_item_card_widget.dart';
-import 'package:redacted/redacted.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 import 'category_cart.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'notification_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
-  final HomeController homeController = Get.put(HomeController());
+
+  final BannerController bannerController = Get.put(BannerController());
+  final StoreController storeController = Get.put(StoreController());
+  final CategoryController categoryController = Get.put(CategoryController());
+  final ProductController productController = Get.put(ProductController());
+  final LanguageController languageController = Get.put(LanguageController());
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -40,21 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   final Random random = Random();
-
-  final List<Map<String, dynamic>> locations = [
-    {
-      'id': 1,
-      'name': 'ចែច្រិប',
-      'description': 'ភូមិកំពង់ទួល ឃុំអន្លង់រមៀត ស្រុកកណ្តាលស្ទឹង ខេត្តកណ្តាល',
-      'image': 'assets/images/shop.png',
-    },
-    {
-      'id': 2,
-      'name': 'ចែអូនលក់សំបកធុងសាំងនឹងស៊ីទែនគ្រប់ប្រភេទ',
-      'description': 'ភូមិព្រែកតាទែន, NR5, ខេត្កណ្តាល',
-      'image': 'assets/images/shop.png',
-    }
-  ];
+  final RefreshController _refreshController = RefreshController();
 
   State<HomeScreen> createState() => _HomeScreenState();
 
@@ -76,18 +70,40 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.only(left: 5.0),
             child: Row(
               children: [
-                Text(
-                  _shortenText(
-                    locations.firstWhere(
-                        (loc) => loc['id'] == selectedLocationId)['name'],
-                    20, // max characters to show
-                  ),
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
+                Obx(() {
+                  if (widget.storeController.stores.isEmpty) {
+                    return const Text(
+                      "Loading...",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    );
+                  }
+
+                  // Safe to use firstWhere
+                  final store = widget.storeController.stores.firstWhere(
+                    (loc) => loc.id == selectedLocationId,
+                    orElse: () =>
+                        widget.storeController.stores.first, // fallback store
+                  );
+
+                  final displayName =
+                      widget.languageController.currentLanguageCode.value ==
+                              'km'
+                          ? (store.khName ?? store.name)
+                          : store.name;
+
+                  return Text(
+                    _shortenText(displayName, 20),
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  );
+                }),
                 const SizedBox(width: 6),
                 const Icon(Icons.arrow_drop_down, color: Colors.black),
               ],
@@ -99,127 +115,145 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(width: 16),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 25),
-              Obx(() {
-                final isLoading = widget.homeController.isLoading.value;
-                final banners = widget.homeController.banners;
+      body: SmartRefresher(
+        controller: _refreshController,
+        enablePullDown: true,
+        header: const ClassicHeader(height: 0),
+        onRefresh: () {
 
-                // Shared carousel options
-                final carouselOptions = CarouselOptions(
-                  height: 180.0,
-                  enlargeCenterPage: true,
-                  viewportFraction: 0.9,
-                  autoPlay: !isLoading,
-                  aspectRatio: 16 / 9,
-                  autoPlayCurve: Curves.fastOutSlowIn,
-                  enableInfiniteScroll: !isLoading,
-                  autoPlayAnimationDuration: const Duration(seconds: 1),
-                );
+          widget.bannerController.fetchInitData();
+          widget.storeController.fetchInitData();
+          widget.categoryController.fetchInitData();
+          widget.productController.fetchInitData();
 
-                // Skeleton Carousel
-                if (isLoading) {
+          _refreshController.refreshCompleted();
+        },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 25),
+                Obx(() {
+                  final isLoading = widget.bannerController.isLoading.value;
+                  final banners = widget.bannerController.banners;
+
+                  // Shared carousel options
+                  final carouselOptions = CarouselOptions(
+                    height: 180.0,
+                    enlargeCenterPage: true,
+                    viewportFraction: 0.9,
+                    autoPlay: !isLoading,
+                    aspectRatio: 16 / 9,
+                    autoPlayCurve: Curves.fastOutSlowIn,
+                    enableInfiniteScroll: !isLoading,
+                    autoPlayAnimationDuration: const Duration(seconds: 1),
+                  );
+
+                  // Skeleton Carousel
+                  if (isLoading) {
+                    return CarouselSlider.builder(
+                      itemCount: 3,
+                      itemBuilder: (context, index, realIndex) {
+                        return Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Shimmer.fromColors(
+                            baseColor: Colors.grey.shade300,
+                            highlightColor: Colors.grey.shade100,
+                            child: Container(
+                              width: double.infinity,
+                              height: 180,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade400,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      options: CarouselOptions(
+                        height: 180.0,
+                        enlargeCenterPage: true,
+                        viewportFraction: 0.9,
+                        autoPlay: !isLoading,
+                        aspectRatio: 16 / 9,
+                        autoPlayCurve: Curves.fastOutSlowIn,
+                        enableInfiniteScroll: !isLoading,
+                        autoPlayAnimationDuration: const Duration(seconds: 1),
+                      ),
+                    );
+                  }
+
+                  if (banners.isEmpty) return const SizedBox.shrink();
+
+                  // Actual banners
                   return CarouselSlider.builder(
-                    itemCount: 3,
+                    itemCount: banners.length,
                     itemBuilder: (context, index, realIndex) {
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 5),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Shimmer.fromColors(
-                          baseColor: Colors.grey.shade300,
-                          highlightColor: Colors.grey.shade100,
-                          child: Container(
+                      final banner = banners[index];
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: CachedNetworkImage(
+                          imageUrl: banner.image,
+                          fit: BoxFit.cover,
+                          width: MediaQuery.of(context).size.width,
+                          placeholder: (context, url) => Container(
                             width: double.infinity,
                             height: 180,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade400,
-                              borderRadius: BorderRadius.circular(15),
+                            color: Colors.grey[300],
+                            child: const Center(
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: AppColors.primaryColor),
                             ),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            width: double.infinity,
+                            height: 180,
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.error, color: Colors.red),
                           ),
                         ),
                       );
                     },
-                    options: CarouselOptions(
-                      height: 180.0,
-                      enlargeCenterPage: true,
-                      viewportFraction: 0.9,
-                      autoPlay: !isLoading,
-                      aspectRatio: 16 / 9,
-                      autoPlayCurve: Curves.fastOutSlowIn,
-                      enableInfiniteScroll: !isLoading,
-                      autoPlayAnimationDuration: const Duration(seconds: 1),
-                    ),
+                    options: carouselOptions,
                   );
-                }
-
-                if (banners.isEmpty) return const SizedBox.shrink();
-
-                // Actual banners
-                return CarouselSlider.builder(
-                  itemCount: banners.length,
-                  itemBuilder: (context, index, realIndex) {
-                    final banner = banners[index];
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: CachedNetworkImage(
-                        imageUrl: banner.image,
-                        fit: BoxFit.cover,
-                        width: MediaQuery.of(context).size.width,
-                        placeholder: (context, url) => Container(
-                          width: double.infinity,
-                          height: 180,
-                          color: Colors.grey[300],
-                          child: const Center(
-                            child: CircularProgressIndicator(
-                                strokeWidth: 2, color: AppColors.primaryColor),
-                          ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          width: double.infinity,
-                          height: 180,
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.error, color: Colors.red),
-                        ),
-                      ),
-                    );
-                  },
-                  options: carouselOptions,
-                );
-              }),
-              SizedBox(height: 25),
-              _buildSubTitle(S.of(context).category, context),
-              SizedBox(height: 15),
-              Obx(() {
-                return _buildFeaturedCategories(
-                    widget.homeController.categories,
-                    isLoading: widget.homeController.isLoading.value);
-              }),
-              SizedBox(height: 25),
-              _buildSubTitle(S.of(context).new_arrival, context),
-              Obx(() {
-                return _buildHorizontalItemSlider(widget.homeController.newP,
-                    isLoading: widget.homeController.isLoading.value);
-              }),
-              SizedBox(height: 15),
-              _buildSubTitle(S.of(context).best_sell, context),
-              Obx(() {
-                return _buildHorizontalItemSlider(widget.homeController.best_sell,
-                    isLoading: widget.homeController.isLoading.value);
-              }),
-              SizedBox(height: 15),
-              Obx(() {
-                return _buildHorizontalItemSlider(widget.homeController.best_sell2,
-                    isLoading: widget.homeController.isLoading.value);
-              }),
-              SizedBox(height: 15),
-            ],
+                }),
+                SizedBox(height: 25),
+                _buildSubTitle(S.of(context).category, context),
+                SizedBox(height: 15),
+                Obx(() {
+                  return _buildFeaturedCategories(
+                      widget.categoryController.categories,
+                      isLoading: widget.categoryController.isLoading.value);
+                }),
+                SizedBox(height: 25),
+                _buildSubTitle(S.of(context).new_arrival, context),
+                Obx(() {
+                  return _buildHorizontalItemSlider(
+                      widget.productController.newP,
+                      isLoading: widget.productController.isLoading.value);
+                }),
+                SizedBox(height: 15),
+                _buildSubTitle(S.of(context).best_sell, context),
+                Obx(() {
+                  return _buildHorizontalItemSlider(
+                      widget.productController.best_sell,
+                      isLoading: widget.productController.isLoading.value);
+                }),
+                SizedBox(height: 15),
+                Obx(() {
+                  return _buildHorizontalItemSlider(
+                      widget.productController.best_sell2,
+                      isLoading: widget.productController.isLoading.value);
+                }),
+                SizedBox(height: 15),
+              ],
+            ),
           ),
         ),
       ),
@@ -496,12 +530,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
         return LayoutBuilder(
           builder: (context, constraints) {
-            // Calculate total list height
-            final itemHeight = 100.0; // approx height of each location box
-            final totalHeight =
-                16 + 40 + 16 + 18 + 16 + locations.length * (itemHeight + 16);
-            // 16 = padding/margin, 40 = drag handle, 18 = title, 16 = spacing
-
             return Container(
               constraints: BoxConstraints(
                 maxHeight: maxHeight,
@@ -532,16 +560,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   Flexible(
                     child: ListView.builder(
                       shrinkWrap: true,
-                      itemCount: locations.length,
+                      itemCount: widget.storeController.stores.length,
                       itemBuilder: (context, index) {
                         final color = gridColors[index];
-                        final offsetX =
-                            (random.nextDouble() * 6) - 3; // -3 to 3
-                        final offsetY = (random.nextDouble() * 6) - 3;
-                        final blur = random.nextDouble() * 10 + 4; // 4 to 14
-                        final opacity =
-                            0.3 + random.nextDouble() * 0.3; // 0.3 to 0.6
-                        final loc = locations[index];
+                        final loc = widget.storeController.stores[index];
+                        final displayName = widget.languageController
+                                    .currentLanguageCode.value ==
+                                'km'
+                            ? (loc.khName ?? loc.name)
+                            : loc.name;
+
                         return GestureDetector(
                           onTap: () => _showLocationDetails(loc),
                           child: Container(
@@ -571,11 +599,29 @@ class _HomeScreenState extends State<HomeScreen> {
                                       topLeft: Radius.circular(12),
                                       bottomLeft: Radius.circular(12),
                                     ),
-                                    child: Image.asset(
-                                      loc['image'],
+                                    child: CachedNetworkImage(
+                                      imageUrl: loc.image,
                                       width: 40,
                                       height: 40,
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.fill,
+                                      placeholder: (context, url) => Container(
+                                        width: 40,
+                                        height: 40,
+                                        color: Colors.grey[300],
+                                        child: const Center(
+                                            child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: AppColors.primaryColor,
+                                        )),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          Container(
+                                        width: 40,
+                                        height: 40,
+                                        color: Colors.grey[300],
+                                        child: const Icon(Icons.error,
+                                            color: Colors.red),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -588,7 +634,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         .center, // <-- center vertically
                                     children: [
                                       Text(
-                                        loc['name'],
+                                        displayName,
                                         style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -602,7 +648,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           const SizedBox(width: 4),
                                           Expanded(
                                             child: Text(
-                                              loc['description'],
+                                              loc.description,
                                               style: const TextStyle(
                                                 fontSize: 13,
                                                 color: Colors.grey,
@@ -632,27 +678,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSkeletonSlide(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(15),
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        height: 180,
-      ).redacted(
-        context: context,
-        redact: true,
-        configuration: RedactedConfiguration(
-          animationDuration: const Duration(milliseconds: 1000),
-          redactedColor: Colors.grey.shade200,
-          defaultBorderRadius: BorderRadius.circular(15),
-        ),
-      ),
-    );
-  }
-
-  void _showLocationDetails(Map<String, dynamic> loc) {
+  void _showLocationDetails(StoreModel loc) {
     Navigator.pop(context); // Close the selector first
-
+    final displayName =
+        widget.languageController.currentLanguageCode.value == 'km'
+            ? (loc.khName ?? loc.name)
+            : loc.name;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -668,7 +699,7 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                loc['name'],
+                displayName,
                 style:
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
@@ -679,7 +710,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
-                      loc['description'],
+                      loc.description,
                       style: const TextStyle(
                         fontSize: 13,
                         color: Colors.grey,
@@ -705,7 +736,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          selectedLocationId = loc['id'];
+                          selectedLocationId = loc.id;
                         });
                         Navigator.pop(context);
                       },

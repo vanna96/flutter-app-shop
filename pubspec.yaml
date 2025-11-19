@@ -25,9 +25,11 @@ dependencies:
   get_storage: ^2.1.1
   dio: ^5.4.0
   cached_network_image: ^3.4.1
-  redacted: ^1.0.13
-  skeletonizer: ^2.1.0+1
+#  redacted: ^1.0.13
+#  skeletonizer: ^2.1.0+1
   shimmer: ^3.0.0
+  html: ^0.15.4
+  pull_to_refresh: ^2.0.0
 
 dev_dependencies:
   flutter_test:
