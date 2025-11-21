@@ -34,7 +34,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int selectedLocationId = 1;
 
   List<Color> gridColors = [
     Color(0xff53B175),
@@ -84,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   // Safe to use firstWhere
                   final store = widget.storeController.stores.firstWhere(
-                    (loc) => loc.id == selectedLocationId,
+                    (loc) => loc.id == widget.storeController.selectedLocationId.value,
                     orElse: () =>
                         widget.storeController.stores.first, // fallback store
                   );
@@ -735,9 +734,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        setState(() {
-                          selectedLocationId = loc.id;
-                        });
+                        widget.storeController.updateSelectedStore(loc.id);
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
