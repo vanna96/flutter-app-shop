@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:grocery_app/controllers/navigation_controller.dart';
 import 'package:grocery_app/styles/colors.dart';
-
 import 'navigator_item.dart';
 
-class DashboardScreen extends StatefulWidget {
-  @override
-  _DashboardScreenState createState() => _DashboardScreenState();
-}
-
-class _DashboardScreenState extends State<DashboardScreen> {
-  int currentIndex = 0;
+class DashboardScreen extends StatelessWidget {
+  final NavigationController navController = Get.put(NavigationController());
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final items = getNavigatorItems(context);
+
+    return Obx(() => Scaffold(
       backgroundColor: Colors.white,
-      body: getNavigatorItems(context)[currentIndex].screen,
+      body: items[navController.currentIndex.value].screen,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
@@ -38,37 +36,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           child: BottomNavigationBar(
             backgroundColor: Colors.white,
-            currentIndex: currentIndex,
+            currentIndex: navController.currentIndex.value,
             onTap: (index) {
-              setState(() {
-                currentIndex = index;
-              });
+              navController.currentIndex.value = index; // update reactive state
             },
             type: BottomNavigationBarType.fixed,
             selectedItemColor: AppColors.primaryColor,
             selectedLabelStyle: TextStyle(fontWeight: FontWeight.w600),
             unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w600),
             unselectedItemColor: Colors.black,
-            items: getNavigatorItems(context).map((e) {
-              return getNavigationBarItem(
-                  label: e.label, index: e.index, iconPath: e.iconPath);
+            items: items.map((e) {
+              return BottomNavigationBarItem(
+                label: e.label,
+                icon: SvgPicture.asset(
+                  e.iconPath,
+                  color: e.index == navController.currentIndex.value
+                      ? AppColors.primaryColor
+                      : Colors.black,
+                ),
+              );
             }).toList(),
           ),
         ),
       ),
-    );
-  }
-
-  BottomNavigationBarItem getNavigationBarItem(
-      {required String label, required String iconPath, required int index}) {
-    Color iconColor =
-        index == currentIndex ? AppColors.primaryColor : Colors.black;
-    return BottomNavigationBarItem(
-      label: label,
-      icon: SvgPicture.asset(
-        iconPath,
-        color: iconColor,
-      ),
-    );
+    ));
   }
 }

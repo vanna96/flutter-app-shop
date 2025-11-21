@@ -5,12 +5,14 @@ import 'package:get/get.dart';
 import 'package:grocery_app/controllers/language_controller.dart';
 import 'package:grocery_app/controllers/banner_controller.dart';
 import 'package:grocery_app/controllers/category_controller.dart';
+import 'package:grocery_app/controllers/login_controller.dart';
 import 'package:grocery_app/controllers/product_controller.dart';
 import 'package:grocery_app/controllers/store_controller.dart';
 import 'package:grocery_app/generated/l10n.dart';
 import 'package:grocery_app/models/category_model.dart';
 import 'package:grocery_app/models/product_model.dart';
 import 'package:grocery_app/models/store_model.dart';
+import 'package:grocery_app/controllers/navigation_controller.dart';
 import 'package:grocery_app/screens/product_details/product_details_screen.dart';
 import 'package:grocery_app/styles/colors.dart';
 import 'package:grocery_app/widgets/grocery_item_card_widget.dart';
@@ -48,6 +50,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final Random random = Random();
   final RefreshController _refreshController = RefreshController();
+
+  final LoginController loginController = Get.find<LoginController>();
+  final NavigationController navigationController = Get.find<NavigationController>();
 
   State<HomeScreen> createState() => _HomeScreenState();
 
@@ -264,11 +269,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const NotificationListScreen()),
-        );
+        if (loginController.isAuthenticated.value) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NotificationListScreen(),
+            ),
+          );
+        } else {
+          navigationController.currentIndex.value = 4;
+        }
       },
       borderRadius: BorderRadius.circular(size.width * 0.1),
       child: Stack(

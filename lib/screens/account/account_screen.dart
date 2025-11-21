@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:grocery_app/common_widgets/app_text.dart';
 import 'package:grocery_app/controllers/language_controller.dart';
+import 'package:grocery_app/controllers/login_controller.dart';
 import 'package:grocery_app/helpers/column_with_seprator.dart';
 import 'package:grocery_app/screens/account/translate_page.dart';
 import 'package:grocery_app/styles/colors.dart';
@@ -11,17 +12,20 @@ import 'package:grocery_app/common_widgets/app_button.dart';
 import 'package:grocery_app/generated/l10n.dart';
 
 class AccountScreen extends StatelessWidget {
-  final bool isAuthenticated = false;
+
   final LanguageController languageController = Get.find<LanguageController>();
+  final LoginController loginController = Get.find<LoginController>();
   AccountScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: isAuthenticated
-            ? _buildAccountPage(context)
-            : _buildLoginPage(context),
+        body: Obx(() {
+          return loginController.isAuthenticated.value
+              ? _buildAccountPage(context)
+              : _buildLoginPage(context);
+        }),
       ),
     );
   }
@@ -89,9 +93,10 @@ class AccountScreen extends StatelessWidget {
 
                 // Email field
                 TextFormField(
+                  onChanged: (v) => loginController.email.value = v,
                   decoration: InputDecoration(
                     hintText: S.of(context).email_username,
-                    prefixIcon: Icon(Icons.email),
+                    prefixIcon: Icon(Icons.people_sharp),
                     filled: true,
                     fillColor: Colors.white,
                     contentPadding:
@@ -118,6 +123,7 @@ class AccountScreen extends StatelessWidget {
 
                 // Password field
                 TextFormField(
+                  onChanged: (v) => loginController.password.value = v,
                   decoration: InputDecoration(
                     hintText: S.of(context).password,
                     prefixIcon: Icon(Icons.lock),
@@ -146,13 +152,35 @@ class AccountScreen extends StatelessWidget {
                 SizedBox(height: 20),
 
                 // Login button
-                AppButton(
-                  height: 60,
-                  label: S.of(context).login,
-                  fontWeight: FontWeight.w600,
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  onPressed: () {},
-                ),
+                Obx(() {
+                  return loginController.isLoading.value
+                      ? CircularProgressIndicator()
+                      : AppButton(
+                          height: 60,
+                          label: S.of(context).login,
+                          fontWeight: FontWeight.w600,
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          onPressed: () async {
+                            bool success = await loginController.login();
+                            if (success) {
+                              Get.snackbar(
+                                "Success",
+                                "Login successful!",
+                                snackPosition: SnackPosition.BOTTOM,
+                                duration: Duration(seconds: 3),
+                                backgroundColor: AppColors.primaryColor,
+                                colorText: Colors.white,
+                              );
+
+
+                              // Update after 2 seconds
+                              Future.delayed(Duration(seconds: 3), () {
+                                loginController.isAuthenticated.value = true;
+                              });
+                            }
+                          },
+                        );
+                }),
 
                 SizedBox(height: 15),
               ],
@@ -194,20 +222,24 @@ class AccountScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SizedBox(height: 20),
-            ListTile(
-              leading: SizedBox(width: 65, height: 65, child: getImageHeader()),
-              title: AppText(
-                text: "Mr Nobody",
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-              subtitle: AppText(
-                text: "@iamvanna",
-                color: Color(0xff7C7C7C),
-                fontWeight: FontWeight.normal,
-                fontSize: 16,
-              ),
-            ),
+            Obx(() {
+              final dynamic userData = loginController.userData.value;
+              return ListTile(
+                leading: SizedBox(width: 65, height: 65, child: getImageHeader()),
+                title: AppText(
+                  text: "${userData['customer']['first_name']} ${userData['customer']['last_name']}",
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                subtitle: AppText(
+                  text: userData['email'] ?? '@',
+                  color: Color(0xff7C7C7C),
+                  fontWeight: FontWeight.normal,
+                  fontSize: 16,
+                  overflow: TextOverflow.ellipsis, // show "..." if too long
+                ),
+              );
+            }),
             // Account items
             ...getChildrenWithSeperator(
               widgets:
@@ -265,14 +297,20 @@ class AccountScreen extends StatelessWidget {
               "Log Out",
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryColor),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppColors.primaryColor,
+              ),
             ),
             Container() // empty to balance row
           ],
         ),
-        onPressed: () {},
+        onPressed: () {
+          // Clear storage
+          loginController.box.remove("user");
+          loginController.userData.value = {};
+          loginController.isAuthenticated.value = false;
+        },
       ),
     );
   }
