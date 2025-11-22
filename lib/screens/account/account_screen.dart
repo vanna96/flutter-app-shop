@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:grocery_app/common_widgets/app_text.dart';
 import 'package:grocery_app/controllers/language_controller.dart';
 import 'package:grocery_app/controllers/login_controller.dart';
+import 'package:grocery_app/controllers/notification_controller.dart';
 import 'package:grocery_app/helpers/column_with_seprator.dart';
 import 'package:grocery_app/screens/account/translate_page.dart';
 import 'package:grocery_app/styles/colors.dart';
@@ -15,6 +16,9 @@ class AccountScreen extends StatelessWidget {
 
   final LanguageController languageController = Get.find<LanguageController>();
   final LoginController loginController = Get.find<LoginController>();
+  final NotificationController notificationController =
+  Get.put(NotificationController());
+
   AccountScreen({Key? key}) : super(key: key);
 
   @override
@@ -310,6 +314,7 @@ class AccountScreen extends StatelessWidget {
           loginController.box.remove("user");
           loginController.userData.value = {};
           loginController.isAuthenticated.value = false;
+          notificationController.notifications.value = [];
         },
       ),
     );

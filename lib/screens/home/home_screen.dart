@@ -6,6 +6,7 @@ import 'package:grocery_app/controllers/language_controller.dart';
 import 'package:grocery_app/controllers/banner_controller.dart';
 import 'package:grocery_app/controllers/category_controller.dart';
 import 'package:grocery_app/controllers/login_controller.dart';
+import 'package:grocery_app/controllers/notification_controller.dart';
 import 'package:grocery_app/controllers/product_controller.dart';
 import 'package:grocery_app/controllers/store_controller.dart';
 import 'package:grocery_app/generated/l10n.dart';
@@ -30,6 +31,7 @@ class HomeScreen extends StatefulWidget {
   final CategoryController categoryController = Get.put(CategoryController());
   final ProductController productController = Get.put(ProductController());
   final LanguageController languageController = Get.put(LanguageController());
+  final NotificationController notificationController = Get.put(NotificationController());
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -266,6 +268,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildNotification(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    int unreadNotifications = widget
+        .notificationController
+        .notifications
+        .where((n) => n.readAt == null)
+        .length;
 
     return InkWell(
       onTap: () {
@@ -292,31 +299,46 @@ class _HomeScreenState extends State<HomeScreen> {
           Positioned(
             right: 0,
             top: 0,
-            child: Container(
-              padding: const EdgeInsets.all(2),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.red,
-                border: Border.all(
-                  color: Colors.white,
-                  width: 2,
-                ),
-              ),
-              constraints: const BoxConstraints(
-                minWidth: 20,
-                minHeight: 20,
-              ),
-              child: const Center(
-                child: Text(
-                  '10+',
-                  style: TextStyle(
+            child: Obx(() {
+              int unread = widget.notificationController.notifications
+                  .where((n) => n.readAt == null)
+                  .length;
+
+              // If 0 unread -> return nothing (hide badge)
+              if (unread == 0) {
+                return SizedBox.shrink(); // or Container()
+              }
+
+              // Limit to "10+"
+              String badgeText = unread > 10 ? "10+" : unread.toString();
+
+              return Container(
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.red,
+                  border: Border.all(
                     color: Colors.white,
-                    fontSize: 10,
+                    width: 2,
                   ),
                 ),
-              ),
-            ),
-          ),
+                constraints: const BoxConstraints(
+                  minWidth: 20,
+                  minHeight: 20,
+                ),
+                child: Center(
+                  child: Text(
+                    badgeText,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              );
+            }),
+          )
         ],
       ),
     );

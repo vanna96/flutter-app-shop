@@ -22,6 +22,12 @@ class NotificationController extends GetxController {
       isLoading.value = true;
       final storedData = box.read("user");
 
+      if (storedData == null || storedData['token'] == null) {
+        print("No stored token. Skipping fetchInitData.");
+        isLoading.value = false;
+        return;
+      }
+
       final notificationRes = await ApiService().dio.get(
         "/api/notifications",
         options: Options(

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:get_storage/get_storage.dart';
+import 'package:grocery_app/controllers/notification_controller.dart';
 import '../services/api_service.dart';
 
 class LoginController extends GetxController {
@@ -12,6 +13,9 @@ class LoginController extends GetxController {
 
   final box = GetStorage();
   Rxn<Map<String, dynamic>> userData = Rxn<Map<String, dynamic>>();
+
+  final NotificationController notificationController =
+  Get.put(NotificationController());
 
   @override
   void onInit() {
@@ -102,6 +106,7 @@ class LoginController extends GetxController {
         // Save token
         box.write("user", res.data['data']);
         userData.value = res.data['data'];
+        await notificationController.fetchInitData();
         return true;
       } else {
         // Handle client errors (like 422) here
