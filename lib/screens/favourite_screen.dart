@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:grocery_app/helpers/column_with_seprator.dart';
-import 'package:grocery_app/models/grocery_item.dart';
-import 'package:grocery_app/widgets/fav_item_widget.dart';
+import 'package:demo_app/helpers/column_with_seprator.dart';
+import 'package:demo_app/models/grocery_item.dart';
+import 'package:demo_app/widgets/fav_item_widget.dart';
 
 class FavouriteScreen extends StatelessWidget {
   @override

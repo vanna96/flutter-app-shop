@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:grocery_app/models/notification_model.dart';
-import 'package:grocery_app/services/api_service.dart';
+import 'package:demo_app/models/notification_model.dart';
+import 'package:demo_app/services/api_service.dart';
 
 class NotificationController extends GetxController {
   var isLoading = true.obs;

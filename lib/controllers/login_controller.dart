@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:get_storage/get_storage.dart';
-import 'package:grocery_app/controllers/notification_controller.dart';
+import 'package:demo_app/controllers/notification_controller.dart';
 import '../services/api_service.dart';
 
 class LoginController extends GetxController {

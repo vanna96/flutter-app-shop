@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:grocery_app/common_widgets/app_button.dart';
-import 'package:grocery_app/common_widgets/app_text.dart';
-import 'package:grocery_app/styles/colors.dart';
+import 'package:demo_app/common_widgets/app_button.dart';
+import 'package:demo_app/common_widgets/app_text.dart';
+import 'package:demo_app/styles/colors.dart';
 
 class FilterScreen extends StatelessWidget {
   @override

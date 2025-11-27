@@ -1,12 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:demo_app/models/category_model.dart';
+import 'package:demo_app/styles/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_app/common_widgets/app_text.dart';
-import 'package:grocery_app/models/category_item.dart';
+import 'package:demo_app/common_widgets/app_text.dart';
 
 class CategoryItemCardWidget extends StatelessWidget {
   CategoryItemCardWidget(
       {Key? key, required this.item, this.color = Colors.blue})
       : super(key: key);
-  final CategoryItem item;
+  final CategoryModel item;
 
   final height = 200.0;
 
@@ -34,7 +36,7 @@ class CategoryItemCardWidget extends StatelessWidget {
           Container(
             height: 120,
             width: 120,
-            child: imageWidget(),
+            child: imageWidget(context),
           ),
           SizedBox(
             height: 60,
@@ -52,11 +54,28 @@ class CategoryItemCardWidget extends StatelessWidget {
     );
   }
 
-  Widget imageWidget() {
+  Widget imageWidget(context) {
     return Container(
-      child: Image.asset(
-        item.imagePath,
-        fit: BoxFit.contain,
+      child: CachedNetworkImage(
+        imageUrl: item.image,
+        fit: BoxFit.cover,
+        width: MediaQuery.of(context).size.width,
+        placeholder: (context, url) => Container(
+          width: double.infinity,
+          height: 180,
+          color: Colors.grey[300],
+          child: const Center(
+            child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.primaryColor),
+          ),
+        ),
+        errorWidget: (context, url, error) => Container(
+          width: double.infinity,
+          height: 180,
+          color: Colors.grey[300],
+          child: const Icon(Icons.error, color: Colors.red),
+        ),
       ),
     );
   }

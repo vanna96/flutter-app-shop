@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:grocery_app/models/category_model.dart';
-import 'package:grocery_app/controllers/language_controller.dart';
-import 'package:grocery_app/styles/colors.dart';
+import 'package:demo_app/models/category_model.dart';
+import 'package:demo_app/controllers/language_controller.dart';
+import 'package:demo_app/styles/colors.dart';
 
 class CategoryCard extends StatelessWidget {
   const CategoryCard(this.category,

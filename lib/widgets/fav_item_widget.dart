@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:grocery_app/common_widgets/app_text.dart';
-import 'package:grocery_app/models/grocery_item.dart';
-import 'package:grocery_app/styles/colors.dart';
+import 'package:demo_app/common_widgets/app_text.dart';
+import 'package:demo_app/models/grocery_item.dart';
+import 'package:demo_app/styles/colors.dart';
 
 class FavItemWidget extends StatefulWidget {
   FavItemWidget({Key? key, required this.item}) : super(key: key);

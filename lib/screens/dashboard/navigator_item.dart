@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:grocery_app/screens/account/account_screen.dart';
-import 'package:grocery_app/screens/cart/cart_screen.dart';
-import 'package:grocery_app/screens/explore_screen.dart';
-import 'package:grocery_app/screens/home/home_screen.dart';
-import 'package:grocery_app/screens/shop/shop_screen.dart';
-import 'package:grocery_app/generated/l10n.dart';
+import 'package:demo_app/screens/account/account_screen.dart';
+import 'package:demo_app/screens/cart/cart_screen.dart';
+import 'package:demo_app/screens/explore_screen.dart';
+import 'package:demo_app/screens/home/home_screen.dart';
+import 'package:demo_app/screens/shop/shop_screen.dart';
+import 'package:demo_app/generated/l10n.dart';
 // import '../favourite_screen.dart';
 
 class NavigatorItem {

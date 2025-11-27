@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:grocery_app/controllers/language_controller.dart';
+import 'package:demo_app/controllers/language_controller.dart';
 import '../../generated/l10n.dart';
 
 class TranslatePage extends StatelessWidget {

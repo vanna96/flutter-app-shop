@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:grocery_app/screens/welcome_screen.dart';
-import 'package:grocery_app/styles/colors.dart';
+import 'package:demo_app/screens/welcome_screen.dart';
+import 'package:demo_app/styles/colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SplashScreen extends StatefulWidget {

@@ -8,7 +8,7 @@ class ApiService {
 
   ApiService._internal() {
     dio = Dio(BaseOptions(
-      baseUrl: "https://laurelfashionvc.com.kh:40000",
+      baseUrl: "https://laurelfashionvc.com.kh",
       connectTimeout: Duration(seconds: 60),
       receiveTimeout: Duration(seconds: 10),
       headers: {

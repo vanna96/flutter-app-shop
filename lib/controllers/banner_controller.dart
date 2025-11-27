@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:grocery_app/models/banner_model.dart';
-import 'package:grocery_app/services/api_service.dart';
+import 'package:demo_app/models/banner_model.dart';
+import 'package:demo_app/services/api_service.dart';
 
 class BannerController extends GetxController {
   var isLoading = true.obs;

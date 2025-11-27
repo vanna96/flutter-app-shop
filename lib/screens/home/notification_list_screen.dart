@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:grocery_app/controllers/notification_controller.dart';
-import 'package:grocery_app/styles/colors.dart';
+import 'package:demo_app/controllers/notification_controller.dart';
+import 'package:demo_app/styles/colors.dart';
 import 'package:shimmer/shimmer.dart';
 
 class NotificationListScreen extends StatelessWidget {

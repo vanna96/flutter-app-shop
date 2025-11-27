@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:grocery_app/screens/splash_screen.dart';
-import 'package:grocery_app/styles/theme.dart';
+import 'package:demo_app/screens/splash_screen.dart';
+import 'package:demo_app/styles/theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'controllers/language_controller.dart';
 import 'generated/l10n.dart';

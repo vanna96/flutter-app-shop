@@ -22,8 +22,8 @@ class ProductModel {
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
       id: json['id'],
-      name: json['name'] ?? '',                 // nullable
-      khName: json['kh_name'] ?? '',            // nullable
+      name: json['code'] ?? '',                 // nullable
+      khName: json['code'] ?? '',            // nullable
       image: json['thumbnail'] ?? '',     // use thumbnail
       price: double.tryParse(json['price'].toString()) ?? 0,
       categoryEn: json['cat_en'] ?? '',

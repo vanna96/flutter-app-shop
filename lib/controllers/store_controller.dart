@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:grocery_app/models/store_model.dart';
-import 'package:grocery_app/services/api_service.dart';
+import 'package:demo_app/models/store_model.dart';
+import 'package:demo_app/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StoreController extends GetxController {

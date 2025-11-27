@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:grocery_app/common_widgets/app_text.dart';
-import 'package:grocery_app/controllers/language_controller.dart';
-import 'package:grocery_app/controllers/login_controller.dart';
-import 'package:grocery_app/controllers/notification_controller.dart';
-import 'package:grocery_app/helpers/column_with_seprator.dart';
-import 'package:grocery_app/screens/account/translate_page.dart';
-import 'package:grocery_app/styles/colors.dart';
+import 'package:demo_app/common_widgets/app_text.dart';
+import 'package:demo_app/controllers/language_controller.dart';
+import 'package:demo_app/controllers/login_controller.dart';
+import 'package:demo_app/controllers/notification_controller.dart';
+import 'package:demo_app/helpers/column_with_seprator.dart';
+import 'package:demo_app/screens/account/translate_page.dart';
+import 'package:demo_app/styles/colors.dart';
 import 'account_item.dart';
-import 'package:grocery_app/common_widgets/app_button.dart';
-import 'package:grocery_app/generated/l10n.dart';
+import 'package:demo_app/common_widgets/app_button.dart';
+import 'package:demo_app/generated/l10n.dart';
 
 class AccountScreen extends StatelessWidget {
 
