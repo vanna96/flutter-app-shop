@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:grocery_app/styles/colors.dart';
+import 'package:grocery_app/localization/localized_material.dart';
 import 'package:get/get.dart';
 import 'package:grocery_app/controllers/language_controller.dart';
 import '../../generated/l10n.dart';
@@ -31,7 +32,7 @@ class TranslatePage extends StatelessWidget {
             return ListTile(
               title: Text(name),
               trailing: isSelected
-                  ? const Icon(Icons.check, color: Colors.blue)
+                  ? Icon(Icons.check, color: AppColors.primaryColor)
                   : null,
               onTap: () {
                 languageController.setLanguage(name, code);

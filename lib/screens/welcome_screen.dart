@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:grocery_app/localization/localized_material.dart';
 import 'package:grocery_app/common_widgets/app_button.dart';
 import 'package:grocery_app/common_widgets/app_text.dart';
 import 'package:grocery_app/screens/dashboard/dashboard_screen.dart';
@@ -66,7 +66,7 @@ class WelcomeScreen extends StatelessWidget {
           color: Colors.white,
         ),
         AppText(
-          text: "to our store",
+          text: "to V-POS",
           fontSize: 48,
           fontWeight: FontWeight.w600,
           color: Colors.white,
@@ -80,7 +80,7 @@ class WelcomeScreen extends StatelessWidget {
       text: "Get your products as fast as in hour",
       fontSize: 16,
       fontWeight: FontWeight.w600,
-      color: Color(0xffFCFCFC).withOpacity(0.7),
+      color: Color(0xffFCFCFC).withValues(alpha: 0.7),
     );
   }
 

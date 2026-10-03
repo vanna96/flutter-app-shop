@@ -1,9 +1,12 @@
 import 'package:get/get.dart';
+import 'package:grocery_app/controllers/store_controller.dart';
+import 'package:grocery_app/data/mock_data.dart';
 import 'package:grocery_app/models/category_model.dart';
-import 'package:grocery_app/services/api_service.dart';
+import 'package:grocery_app/services/mobile_api_repository.dart';
 
 class CategoryController extends GetxController {
   var isLoading = true.obs;
+  final MobileApiRepository _mobileApiRepository = MobileApiRepository();
 
   RxList<CategoryModel> categories = <CategoryModel>[].obs;
 
@@ -11,23 +14,36 @@ class CategoryController extends GetxController {
   void onInit() {
     fetchInitData();
     super.onInit();
+
+    if (Get.isRegistered<StoreController>()) {
+      ever(Get.find<StoreController>().selectedLocationId, (_) {
+        fetchInitData();
+      });
+    }
   }
 
   Future<void> fetchInitData() async {
     try {
       isLoading.value = true;
+      int? branchId;
+      if (Get.isRegistered<StoreController>()) {
+        final locId = Get.find<StoreController>().selectedLocationId.value;
+        if (locId > 0) {
+          branchId = locId;
+        }
+      }
 
-      final categoryRes = await ApiService().get('/api/category');
-
-      // Access the data inside Response.data
-      final categoryList = categoryRes.data['data'] as List;
-
-      // Map JSON to models
+      final remoteCategories =
+          await _mobileApiRepository.fetchCategories(branchId: branchId);
+      if (remoteCategories.isNotEmpty) {
+        MockDataRepository.updateCategories(remoteCategories);
+      }
       categories.value =
-          categoryList.map((e) => CategoryModel.fromJson(e)).toList();
-
+          List<CategoryModel>.from(MockDataRepository.categories);
     } catch (e) {
-      print("ERROR: $e");
+      categories.value =
+          List<CategoryModel>.from(MockDataRepository.categories);
+      print('ERROR: $e');
     } finally {
       isLoading.value = false;
     }

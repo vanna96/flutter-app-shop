@@ -14,12 +14,17 @@ class NotificationModel {
   });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
+    final createdAtValue = json['created_at']?.toString();
+    final readAtValue = json['read_at']?.toString();
+
     return NotificationModel(
-      id: json['id'],
-      message: json['smg'] ?? '',
-      type: json['type'] ?? '',
-      createdAt: DateTime.parse(json['created_at']),
-      readAt: json['read_at'] != null ? DateTime.parse(json['read_at']) : null,
+      id: int.tryParse(json['id'].toString()) ?? 0,
+      message: json['message']?.toString() ?? json['smg']?.toString() ?? '',
+      type: json['type']?.toString() ?? '',
+      createdAt: DateTime.tryParse(createdAtValue ?? '') ?? DateTime.now(),
+      readAt: readAtValue == null || readAtValue.isEmpty
+          ? null
+          : DateTime.tryParse(readAtValue),
     );
   }
 

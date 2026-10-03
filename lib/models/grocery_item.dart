@@ -57,7 +57,14 @@ var exclusiveOffers = [demoItems[0], demoItems[1], demoItems[2], demoItems[3]];
 
 var bestSelling = [demoItems[2], demoItems[3]];
 
-var groceries = [demoItems[0], demoItems[1], demoItems[2], demoItems[3], demoItems[4], demoItems[5]];
+var groceries = [
+  demoItems[0],
+  demoItems[1],
+  demoItems[2],
+  demoItems[3],
+  demoItems[4],
+  demoItems[5]
+];
 
 var beverages = [
   GroceryItem(

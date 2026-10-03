@@ -1,8 +1,11 @@
-import 'package:flutter/material.dart';
+import 'package:grocery_app/localization/localized_material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:grocery_app/common_widgets/app_button.dart';
+import 'package:grocery_app/screens/account/order_history_screen.dart';
 
 class OrderAcceptedScreen extends StatelessWidget {
+  const OrderAcceptedScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +48,10 @@ class OrderAcceptedScreen extends StatelessWidget {
             AppButton(
               label: "Track Order",
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => OrderHistoryScreen()),
+                );
               },
             ),
             Spacer(

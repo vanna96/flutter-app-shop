@@ -1,62 +1,85 @@
-import 'package:flutter/material.dart';
-import 'package:grocery_app/common_widgets/app_text.dart';
+import 'package:grocery_app/localization/localized_material.dart';
+import 'package:grocery_app/helpers/category_visuals.dart';
 import 'package:grocery_app/models/category_item.dart';
+import 'package:grocery_app/styles/colors.dart';
+import 'package:grocery_app/widgets/app_network_image.dart';
 
 class CategoryItemCardWidget extends StatelessWidget {
-  CategoryItemCardWidget(
-      {Key? key, required this.item, this.color = Colors.blue})
-      : super(key: key);
+  const CategoryItemCardWidget({
+    super.key,
+    required this.item,
+    this.color = AppColors.primaryColor,
+  });
+
   final CategoryItem item;
-
-  final height = 200.0;
-
-  final width = 175.0;
-
-  final Color borderColor = Color(0xffE2E2E2);
-  final double borderRadius = 18;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
+    final effectiveImage =
+        CategoryVisuals.getEffectiveImage(item.imagePath, item.name);
+    final fallbackIcon = CategoryVisuals.getIcon(item.name);
+
     return Container(
-      padding: EdgeInsets.only(top: 5, bottom: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(18),
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: color.withOpacity(0.7),
-          width: 2,
+          color: color.withValues(alpha: 0.25),
+          width: 1,
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Row(
         children: [
-          Container(
-            height: 120,
-            width: 120,
-            child: imageWidget(),
-          ),
-          SizedBox(
-            height: 60,
-            child: Center(
-              child: AppText(
-                text: item.name,
-                textAlign: TextAlign.center,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+          Expanded(
+            child: Text(
+              item.name,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF0F172A),
+                height: 1.25,
               ),
             ),
           ),
+          const SizedBox(width: 8),
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: color.withValues(alpha: 0.2),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: effectiveImage.isNotEmpty
+                  ? AppNetworkImage(
+                      image: effectiveImage,
+                      fit: BoxFit.cover,
+                      width: 48,
+                      height: 48,
+                      fallbackIcon: fallbackIcon,
+                    )
+                  : Center(
+                      child: Icon(
+                        fallbackIcon,
+                        color: color,
+                        size: 24,
+                      ),
+                    ),
+            ),
+          ),
         ],
-      ),
-    );
-  }
-
-  Widget imageWidget() {
-    return Container(
-      child: Image.asset(
-        item.imagePath,
-        fit: BoxFit.contain,
       ),
     );
   }

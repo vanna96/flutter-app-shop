@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:grocery_app/localization/localized_material.dart';
 import 'package:grocery_app/common_widgets/app_button.dart';
 import 'package:grocery_app/common_widgets/app_text.dart';
 import 'package:grocery_app/screens/order_accepted_screen.dart';

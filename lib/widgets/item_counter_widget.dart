@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:grocery_app/localization/localized_material.dart';
 import 'package:grocery_app/styles/colors.dart';
 
 class ItemCounterWidget extends StatefulWidget {
@@ -40,7 +40,7 @@ class _ItemCounterWidgetState extends State<ItemCounterWidget> {
   }
 
   void decrementAmount() {
-    if (amount <= 0) return;
+    if (amount <= 1) return;
     setState(() {
       amount = amount - 1;
       updateParent();

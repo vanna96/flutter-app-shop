@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:grocery_app/localization/localized_material.dart';
 import 'package:grocery_app/styles/colors.dart';
 
 class AppButton extends StatelessWidget {
@@ -12,18 +12,18 @@ class AppButton extends StatelessWidget {
   final Color? textColor; // Added property for text color
   final double? height;
 
-  const AppButton({
-    Key? key,
-    required this.label,
-    this.roundness = 18,
-    this.fontWeight = FontWeight.bold,
-    this.padding = const EdgeInsets.symmetric(vertical: 24),
-    this.trailingWidget,
-    this.onPressed,
-    this.bgColor,
-    this.textColor,
-    this.height = 65
-  }) : super(key: key);
+  const AppButton(
+      {Key? key,
+      required this.label,
+      this.roundness = 18,
+      this.fontWeight = FontWeight.bold,
+      this.padding = const EdgeInsets.symmetric(vertical: 24),
+      this.trailingWidget,
+      this.onPressed,
+      this.bgColor,
+      this.textColor,
+      this.height = 65})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -50,23 +50,21 @@ class AppButton extends StatelessWidget {
           minimumSize: const Size.fromHeight(50),
         ),
         child: Stack(
-          fit: StackFit.passthrough,
+          alignment: Alignment.center,
           children: <Widget>[
             Center(
               child: Text(
                 label,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: fontWeight,
-                  color: textColor ?? Colors.white
-                ),
+                    fontSize: 18,
+                    fontWeight: fontWeight,
+                    color: textColor ?? Colors.white),
               ),
             ),
             if (trailingWidget != null)
               Positioned(
-                top: 0,
-                right: 25,
+                right: 18,
                 child: trailingWidget!,
               ),
           ],

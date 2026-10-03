@@ -12,7 +12,6 @@
     "account": "Account",
     "email_username": "Email / Username",
     "password": "Password",
-    "login": "Login",
     "category": "Category",
     "new_arrival": "New Arrival",
     "best_sell": "Best Selling",
@@ -20,4 +19,3 @@
     "select_location": "Select Location"
 
 }
-

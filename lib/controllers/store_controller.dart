@@ -1,16 +1,29 @@
 import 'package:get/get.dart';
+import 'package:grocery_app/controllers/banner_controller.dart';
+import 'package:grocery_app/controllers/category_controller.dart';
+import 'package:grocery_app/controllers/product_controller.dart';
+import 'package:grocery_app/data/mock_data.dart';
 import 'package:grocery_app/models/store_model.dart';
-import 'package:grocery_app/services/api_service.dart';
+import 'package:grocery_app/services/mobile_api_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StoreController extends GetxController {
   var isLoading = true.obs;
+  final MobileApiRepository _mobileApiRepository = MobileApiRepository();
 
   // Stores list
   RxList<StoreModel> stores = <StoreModel>[].obs;
 
-  // Selected store ID
+  // Selected store ID: 0 means All Branches
   RxInt selectedLocationId = 0.obs;
+
+  bool get isAllBranches => selectedLocationId.value == 0;
+
+  StoreModel? get selectedStore {
+    final id = selectedLocationId.value;
+    if (id == 0) return null;
+    return stores.firstWhereOrNull((store) => store.id == id);
+  }
 
   @override
   void onInit() {
@@ -19,38 +32,46 @@ class StoreController extends GetxController {
   }
 
   Future<void> fetchInitData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedId = prefs.getInt('store_id');
+
     try {
       isLoading.value = true;
-
-      // Load saved ID
-      final prefs = await SharedPreferences.getInstance();
-      int? savedId = prefs.getInt('store_id');
-
-      // 1. Fetch stores from API
-      final storeRes = await ApiService().get('/api/store');
-      final storesList = storeRes.data['data'] as List;
-      stores.value = storesList.map((e) => StoreModel.fromJson(e)).toList();
-
-      // 2. If no saved ID → select first store automatically
-      if (savedId == null || savedId == 0) {
-        selectedLocationId.value = stores.first.id; // <-- default
-        await prefs.setInt('store_id', selectedLocationId.value);
-      } else {
-        selectedLocationId.value = savedId; // load saved
+      final remoteStores = await _mobileApiRepository.fetchBranches();
+      if (remoteStores.isNotEmpty) {
+        MockDataRepository.updateStores(remoteStores);
       }
-
+      stores.value = List<StoreModel>.from(MockDataRepository.stores);
     } catch (e) {
-      print("ERROR: $e");
+      stores.value = List<StoreModel>.from(MockDataRepository.stores);
+      print('ERROR: $e');
     } finally {
+      final resolvedId =
+          savedId != null &&
+              (savedId == 0 || stores.any((store) => store.id == savedId))
+          ? savedId
+          : 0;
+      selectedLocationId.value = resolvedId;
+
       isLoading.value = false;
     }
   }
 
-  // Call this when user changes location/store
   Future<void> updateSelectedStore(int id) async {
     selectedLocationId.value = id;
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('store_id', id);
+
+    // Refresh all screens and controllers based on new branch
+    if (Get.isRegistered<ProductController>()) {
+      Get.find<ProductController>().fetchInitData();
+    }
+    if (Get.isRegistered<BannerController>()) {
+      Get.find<BannerController>().fetchInitData();
+    }
+    if (Get.isRegistered<CategoryController>()) {
+      Get.find<CategoryController>().fetchInitData();
+    }
   }
 }

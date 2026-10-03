@@ -1,10 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:grocery_app/localization/localized_material.dart';
 import 'package:grocery_app/common_widgets/app_button.dart';
 import 'package:grocery_app/common_widgets/app_text.dart';
 import 'package:grocery_app/models/grocery_item.dart';
 import 'package:grocery_app/widgets/item_counter_widget.dart';
-
-import 'favourite_toggle_icon_widget.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final GroceryItem groceryItem;
@@ -45,7 +43,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         fontWeight: FontWeight.w600,
                         color: Color(0xff7C7C7C),
                       ),
-                      trailing: FavoriteToggleIcon(),
+                      trailing: Icon(
+                        Icons.favorite_border,
+                        color: Colors.blueGrey,
+                      ),
                     ),
                     Spacer(),
                     Row(
@@ -104,10 +105,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           bottomLeft: Radius.circular(25),
           bottomRight: Radius.circular(25),
         ),
-        gradient: new LinearGradient(
+        gradient: LinearGradient(
             colors: [
-              const Color(0xFF3366FF).withOpacity(0.1),
-              const Color(0xFF3366FF).withOpacity(0.09),
+              const Color(0xFF3366FF).withValues(alpha: 0.1),
+              const Color(0xFF3366FF).withValues(alpha: 0.09),
             ],
             begin: const FractionalOffset(0.0, 0.0),
             end: const FractionalOffset(0.0, 1.0),

@@ -1,5 +1,5 @@
 <svg width="277" height="241" viewBox="0 0 277 241" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="141.076" cy="108.527" r="79.0761" fill="#53B175"/>
+    <circle cx="141.076" cy="108.527" r="79.0761" fill="#FF762D"/>
     <g filter="url(#filter0_d)">
         <circle cx="141.076" cy="108.527" r="68.1416" stroke="white" stroke-opacity="0.7" stroke-width="2"/>
     </g>
@@ -9,11 +9,11 @@
     <path d="M2 185.016C13.3283 189.282 37.7503 192.342 44.8122 170.451M44.8122 170.451C45.8421 164.419 44.8123 152.487 32.4542 153.017C30.1002 158.828 29.2762 170.451 44.8122 170.451ZM44.8122 170.451C49.9615 171.407 61.9372 170.495 68.6458 159.196" stroke="#6E89FA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
     <circle cx="185.771" cy="232.727" r="7.57962" fill="#637BFE"/>
     <circle cx="257.425" cy="112.7" r="7.07962" stroke="#C05EFD"/>
-    <circle cx="137.106" cy="8.30033" r="8.30033" fill="#53B175"/>
+    <circle cx="137.106" cy="8.30033" r="8.30033" fill="#FF762D"/>
     <circle cx="160.673" cy="22.3101" r="4.38348" fill="#F3603F"/>
     <circle cx="54.682" cy="75.682" r="7.18199" stroke="#F7B23B"/>
-    <circle cx="81.7038" cy="207.816" r="7.94695" stroke="#53B175"/>
-    <circle r="4.03543" transform="matrix(-1 0 0 1 162.203 224.035)" fill="#53B175"/>
+    <circle cx="81.7038" cy="207.816" r="7.94695" stroke="#FF762D"/>
+    <circle r="4.03543" transform="matrix(-1 0 0 1 162.203 224.035)" fill="#FF762D"/>
     <defs>
         <filter id="filter0_d" x="67.9346" y="38.3854" width="146.283" height="146.283" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
             <feFlood flood-opacity="0" result="BackgroundImageFix"/>

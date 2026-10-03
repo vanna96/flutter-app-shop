@@ -23,14 +23,14 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "account": MessageLookupByLibrary.simpleMessage("គណនី"),
-    "best_sell": MessageLookupByLibrary.simpleMessage("ចំណាត់ថ្នាក់កំពូល"),
-    "cart": MessageLookupByLibrary.simpleMessage("កន្រ្តាក់"),
+    "best_sell": MessageLookupByLibrary.simpleMessage("លក់ដាច់បំផុត"),
+    "cart": MessageLookupByLibrary.simpleMessage("រទេះទំនិញ"),
     "category": MessageLookupByLibrary.simpleMessage("ប្រភេទ"),
     "email_username": MessageLookupByLibrary.simpleMessage(
       "អ៊ីមែល / ឈ្មោះអ្នកប្រើ",
     ),
     "explore": MessageLookupByLibrary.simpleMessage("ស្វែងរក"),
-    "favourite": MessageLookupByLibrary.simpleMessage("ចូលចិត្ត"),
+    "favourite": MessageLookupByLibrary.simpleMessage("ចំណូលចិត្ត"),
     "home": MessageLookupByLibrary.simpleMessage("ទំព័រដើម"),
     "login": MessageLookupByLibrary.simpleMessage("ចូល"),
     "new_arrival": MessageLookupByLibrary.simpleMessage("ផលិតផលមកដល់ថ្មី"),

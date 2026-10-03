@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:grocery_app/localization/localized_material.dart';
 import 'package:grocery_app/common_widgets/app_text.dart';
 import 'package:grocery_app/styles/colors.dart';
 
@@ -28,7 +28,7 @@ class GroceryFeaturedCard extends StatelessWidget {
       height: 105,
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 17),
       decoration: BoxDecoration(
-          color: color.withOpacity(0.25),
+          color: color.withValues(alpha: 0.25),
           borderRadius: BorderRadius.circular(18)),
       child: Row(
         children: [

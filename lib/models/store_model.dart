@@ -3,19 +3,30 @@ import 'package:html/parser.dart' as html_parser;
 class StoreModel {
   final int id;
   final String image;
-  final dynamic name;
-  final dynamic khName;
-  final dynamic description;
+  final String name;
+  final String? khName;
+  final String description;
 
-  StoreModel({required this.id, required this.image, this.name, this.description, this.khName});
+  StoreModel({
+    required this.id,
+    required this.image,
+    required this.name,
+    required this.description,
+    this.khName,
+  });
 
   factory StoreModel.fromJson(Map<String, dynamic> json) {
     return StoreModel(
-        id: json['id'],
-        image: json['image'],
-        name: json['name'],
-        khName: json['kh_name'],
-        description: stripHtml(json['description']),
+      id: int.tryParse(json['id'].toString()) ?? 0,
+      image: json['image_url']?.toString() ??
+          json['thumbnail_url']?.toString() ??
+          json['image']?.toString() ??
+          'assets/images/shop.png',
+      name: json['name']?.toString() ?? '',
+      khName: json['foreign_name']?.toString() ?? json['kh_name']?.toString(),
+      description: stripHtml(
+        json['location']?.toString() ?? json['description']?.toString(),
+      ),
     );
   }
 }

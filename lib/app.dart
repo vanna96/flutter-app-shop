@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/splash_screen.dart';
 import 'package:grocery_app/styles/theme.dart';
+import 'package:grocery_app/widgets/network_status_banner.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'controllers/language_controller.dart';
 import 'generated/l10n.dart';
@@ -15,8 +16,10 @@ class MyApp extends StatelessWidget {
     final LanguageController languageController =
         Get.find<LanguageController>();
     return Obx(
-      () => MaterialApp(
-        theme: themeData,
+      () => GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'V-POS',
+        theme: buildThemeData(languageController.currentLanguageCode.value),
         localizationsDelegates: const [
           S.delegate,
           GlobalMaterialLocalizations.delegate,
@@ -25,7 +28,22 @@ class MyApp extends StatelessWidget {
         ],
         supportedLocales: S.delegate.supportedLocales,
         locale: Locale(languageController.currentLanguageCode.value),
-        home: SplashScreen(),
+        builder: (context, child) => Overlay(
+          initialEntries: [
+            OverlayEntry(
+              builder: (context) => ScaffoldMessenger(
+                child: Stack(
+                  textDirection: TextDirection.ltr,
+                  children: [
+                    child ?? const SizedBox.shrink(),
+                    const NetworkStatusBanner(),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        home: const SplashScreen(),
       ),
     );
   }
